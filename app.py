@@ -11,15 +11,17 @@ from bokeh.embed import components
 from jinja2 import Template
 
 
-def plotDF(dataDF,StockName):
+def plotDF(dataDF,StockName,ShowFeatures):
   dataDF['Date'] = pd.to_datetime(dataDF['Date'])
-  x=dataDF['Date']
-  y=dataDF['Close']
   # select the tools we want
   TOOLS="pan,wheel_zoom,box_zoom,reset,save"
+  # set colors
+  colors=["blue","red"]
   # build our figures
   p = figure(tools=TOOLS, plot_width=650, plot_height=650,x_axis_type="datetime")
-  p.line(x, y, color="blue",line_width=2,alpha=0.5,legend=StockName+': '+'Close Price')
+  for i in range(len(ShowFeatures)):
+    p.line(dataDF['Date'], dataDF[ShowFeatures[i]], color=colors[i],\
+           line_width=1,alpha=0.5,legend=StockName+': '+ShowFeatures[i])
   p.title = 'Stock Evolution: ' + StockName
   p.legend.orientation = "top_right"
   p.grid.grid_line_alpha=0
@@ -34,6 +36,9 @@ def plotDF(dataDF,StockName):
   plots = {'Red': p}
   
   script, div = components(plots)
+  message=''
+  if len(ShowFeatures)==0:
+    message='Nothing to show here, because you did not choose any feature.'
   template = Template('''<!DOCTYPE html>
   <html lang="en">
     <head>
@@ -44,6 +49,7 @@ def plotDF(dataDF,StockName):
         <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.9.0.min.js"></script>
         {{ script }}
     <h1>Stock Evolution for {{ stock_name }}</h1>
+    <h2>{{ message}}</h2>
   <form id='index' method='post' action='/' > <!-- action is the URL you want to move to next-->
    <p>
    <input type='submit' value='Back' /> <!-- value is the text that will appear on the button. -->
@@ -60,7 +66,7 @@ def plotDF(dataDF,StockName):
   ''')
   html_file = 'templates/embed_multiple.html'
   with open(html_file, 'w') as textfile:
-    textfile.write(template.render(script=script, div=div, stock_name=StockName))
+    textfile.write(template.render(script=script, div=div, stock_name=StockName,message=message))
 
 
 
@@ -76,6 +82,11 @@ def index():
     return render_template('index.html')
   else:
     StockName = request.form['stock_name'].upper()
+    ShowFeatures=[] # which features to show
+    if request.form.get('close_price',False):
+       ShowFeatures.append('Close')
+    if request.form.get('adj_close_price',False):
+       ShowFeatures.append('Adj. Close')
     today=datetime.date.today()
     first_day_of_current_month = today.replace(day=1)
     last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
@@ -86,7 +97,7 @@ def index():
       columnNames=r['dataset']['column_names']
       DFValues=r['dataset']['data']
       dataDF = pd.DataFrame(data=DFValues,columns=columnNames)
-      plotDF(dataDF,StockName)
+      plotDF(dataDF,StockName,ShowFeatures)
       return render_template('embed_multiple.html',stock_name=StockName) 
     else:
       message = "Quandl can't find the stock ticker. Please check the spelling and try again."#r['quandl_error']['message'] 
