@@ -25,7 +25,7 @@ def plotDF(dataDF,StockName,ShowFeatures):
            line_width=1,alpha=0.5,legend=StockName+': '+ShowFeatures[i])
   p.title = 'Stock Evolution: ' + StockName
   p.legend.orientation = "top_right"
-  p.grid.grid_line_alpha=0
+  p.grid.grid_line_alpha=0.7
   p.xaxis.axis_label = 'Date'
   p.yaxis.axis_label = 'Price'
   p.ygrid.band_fill_color="olive"
