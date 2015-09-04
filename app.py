@@ -9,9 +9,9 @@ from bokeh.plotting import figure
 from bokeh.models import Range1d
 from bokeh.embed import components
 from jinja2 import Template
-import os
-import six
-import webbrowser
+#import os
+#import six
+#import webbrowser
 
 app = Flask(__name__)
 
