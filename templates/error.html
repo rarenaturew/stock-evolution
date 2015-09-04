@@ -5,9 +5,21 @@
   <h1>ERROR</h1>
   <div class=metanav>
 
-<h4>
-{{end_message}}
+<h4 align="left">
+One or more error(s) occurred. <br> <br>
+To avoid errors, make sure you:</h4>
+<ul align="left">
+  <li>Spell the stock ticker correctly.</li>
+  <li>If you specify the dates, make sure they are in the format of: yyyy-mm-dd.</li>
+  <li>If you specify the dates, make sure the end date is later than the start date.</li>
+</ul>
+
+
+<h4 align="left">
+See the follow error message from quandl for more info: 
 </h4>
+{{end_message}}
+
   <form id='index' method='post' action='/' > <!-- action is the URL you want to move to next-->
    <p>
    <input type='submit' value='Back' /> <!-- value is the text that will appear on the button. -->

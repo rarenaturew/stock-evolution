@@ -6,8 +6,7 @@
   <div class=metanav>
 
 <h4>
-Please enter a stock ticker eg. GOOG, and check desired features.<br>
-I will show you the history from {{ start_date }} to today. </h4>
+Please enter a stock ticker eg. GOOG, and check desired features.</h4>
 
 <form id='index' method='post' action='index' > <!-- action is the URL you want to move to next-->
    <p>
@@ -16,6 +15,12 @@ I will show you the history from {{ start_date }} to today. </h4>
    <p>
    Closing price <input type="checkbox" name="close_price" checked><br>
    Adjusted closing price <input type="checkbox" name="adj_close_price">
+   </p>
+   <p>
+   <h4> I will show you the history from {{ start_date }} to today.<br> 
+Alternatively, you can specify your own dates in the format yyyy-mm-dd, eg. 2015-01-01 </h4>
+   Start date: <input type='text' name='start_date' />  &nbsp;&nbsp; 
+   End date: <input type='text' name='end_date' />
    </p>
    <p>
    <input type='submit' value='Submit' /> <!-- value is the text that will appear on the button. -->
