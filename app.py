@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, redirect
 
 import requests
 import datetime
-import dateutil
 import pandas as pd
 
 from bokeh.plotting import figure
@@ -44,8 +43,8 @@ def plotDF(dataDF,StockName,ShowFeatures):
         <meta charset="utf-8">
         <title>Stock Evolution</title>
         <style> div{float: left;} </style>
-        <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.9.0.min.css" type="text/css" />
-        <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.9.0.min.js"></script>
+        <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.9.3.min.css" type="text/css" />
+        <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.9.3.min.js"></script>
         {{ script }}
     <h1>Stock Evolution for {{ stock_name }}</h1>
     <h2>{{ message}}</h2>
@@ -63,7 +62,7 @@ def plotDF(dataDF,StockName,ShowFeatures):
     </body>
   </html>
   ''')
-  html_file = 'templates/embed_multiple.html'
+  html_file = 'templates/bokeh_embed.html'
   with open(html_file, 'w') as textfile:
     textfile.write(template.render(script=script, div=div, stock_name=StockName,message=message))
 
@@ -79,8 +78,12 @@ def main():
 
 @app.route('/index',methods=['GET','POST'])
 def index():
+  today=datetime.date.today()
+  first_day_of_current_month = today.replace(day=1)
+  last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
+  StartDate = last_day_of_previous_month.strftime("%Y-%m") + today.strftime("-%d")
   if request.method == 'GET':
-    return render_template('index.html')
+    return render_template('index.html',start_date=StartDate)
   else:
     StockName = request.form['stock_name'].upper()
     ShowFeatures=[] # which features to show
@@ -88,18 +91,14 @@ def index():
        ShowFeatures.append('Close')
     if request.form.get('adj_close_price',False):
        ShowFeatures.append('Adj. Close')
-    today=datetime.date.today()
-    first_day_of_current_month = today.replace(day=1)
-    last_day_of_previous_month = first_day_of_current_month - datetime.timedelta(days=1)
-    ReDate = last_day_of_previous_month.strftime("%Y-%m") + today.strftime("-%d")
-    ReURL='https://www.quandl.com/api/v3/datasets/WIKI/'+StockName+'.json?auth_token=XMD-ta2mEyx3bj_AGW3n&start_date='+ReDate
+    ReURL='https://www.quandl.com/api/v3/datasets/WIKI/'+StockName+'.json?auth_token=XMD-ta2mEyx3bj_AGW3n&start_date='+StartDate+'&end_date='+today.strftime("%Y-%m-%d")
     r = requests.get(ReURL).json()
     if 'dataset' in r:
       columnNames=r['dataset']['column_names']
       DFValues=r['dataset']['data']
       dataDF = pd.DataFrame(data=DFValues,columns=columnNames)
       plotDF(dataDF,StockName,ShowFeatures)
-      return render_template('embed_multiple.html',stock_name=StockName) 
+      return render_template('bokeh_embed.html') 
     else:
       message = "Quandl can't find the stock ticker. Please check the spelling and try again."# or: r['quandl_error']['message'] 
       return render_template('error.html', end_message=message) 
