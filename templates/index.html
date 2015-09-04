@@ -1,26 +1,23 @@
 <!doctype html>
-<title>A short quiz</title>
+<title>Stock Evolution</title>
 <link rel=stylesheet type=text/css href='{{ url_for('static',filename='style.css')}}'>
 <div class=page>
-  <h1>A short quiz</h1>
+  <h1>Stock Evolution</h1>
   <div class=metanav>
 
 <h4>
-You will be asked {{num}} questions.
-Please answer them to the best of your ability.
+Please enter a stock ticker eg. GOOG, and check desired features.
 </h4>
 
-<form id='userinfoform_lulu' method='post' action='index_lulu' > <!-- action is the URL you want to move to next-->
+<form id='index' method='post' action='index' > <!-- action is the URL you want to move to next-->
    <p>
-   Name: <input type='text' name='name_lulu' />
+   Ticker symbol: <input type='text' name='stock_name' />
    </p>
    <p>
-   Age: <input type='text' name='age_lulu' />
-   </p>
-   <p>
-   <input type='submit' value='Submit_lulu' /> <!-- value is the text that will appear on the button. -->
+   <input type='submit' value='Submit' /> <!-- value is the text that will appear on the button. -->
    </p>
 </form>
+
 
 </div>
 </div>
