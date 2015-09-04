@@ -11,7 +11,8 @@ from bokeh.embed import components
 from jinja2 import Template
 
 
-def plotDF(dataDF,StockName,ShowFeatures):
+def plotDF(dataDF,StockName,ShowFeatures): 
+  """ plot the selected features of the selected stock """
   dataDF['Date'] = pd.to_datetime(dataDF['Date'])
   # select the tools we want
   TOOLS="pan,wheel_zoom,box_zoom,reset,save"
@@ -29,8 +30,6 @@ def plotDF(dataDF,StockName,ShowFeatures):
   p.yaxis.axis_label = 'Price'
   p.ygrid.band_fill_color="olive"
   p.ygrid.band_fill_alpha = 0.1
-
-  #scatter: p.scatter(x, y, size=12, color="red", alpha=0.5)
 
   # plots can be a single PlotObject, a list/tuple, or even a dictionary
   plots = {'Red': p}
@@ -70,6 +69,8 @@ def plotDF(dataDF,StockName,ShowFeatures):
 
 
 
+
+
 app = Flask(__name__)
 
 @app.route('/',methods=['GET','POST'])
@@ -100,7 +101,7 @@ def index():
       plotDF(dataDF,StockName,ShowFeatures)
       return render_template('embed_multiple.html',stock_name=StockName) 
     else:
-      message = "Quandl can't find the stock ticker. Please check the spelling and try again."#r['quandl_error']['message'] 
+      message = "Quandl can't find the stock ticker. Please check the spelling and try again."# or: r['quandl_error']['message'] 
       return render_template('error.html', end_message=message) 
 
 
