@@ -9,11 +9,7 @@ from bokeh.plotting import figure
 from bokeh.models import Range1d
 from bokeh.embed import components
 from jinja2 import Template
-#import os
-#import six
-#import webbrowser
 
-app = Flask(__name__)
 
 def plotDF(dataDF,StockName):
   dataDF['Date'] = pd.to_datetime(dataDF['Date'])
@@ -47,7 +43,7 @@ def plotDF(dataDF,StockName):
         <link rel="stylesheet" href="http://cdn.pydata.org/bokeh/release/bokeh-0.9.0.min.css" type="text/css" />
         <script type="text/javascript" src="http://cdn.pydata.org/bokeh/release/bokeh-0.9.0.min.js"></script>
         {{ script }}
-    <h1>Stock Evolution </h1>
+    <h1>Stock Evolution for {{ stock_name }}</h1>
   <form id='index' method='post' action='/' > <!-- action is the URL you want to move to next-->
    <p>
    <input type='submit' value='Back' /> <!-- value is the text that will appear on the button. -->
@@ -64,10 +60,11 @@ def plotDF(dataDF,StockName):
   ''')
   html_file = 'templates/embed_multiple.html'
   with open(html_file, 'w') as textfile:
-    textfile.write(template.render(script=script, div=div))
+    textfile.write(template.render(script=script, div=div, stock_name=StockName))
 
 
 
+app = Flask(__name__)
 
 @app.route('/',methods=['GET','POST'])
 def main():
