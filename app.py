@@ -23,6 +23,7 @@ def index():
   if request.method == 'GET':
     return render_template('index.html',start_date=StartDate)
   else:
+    #request.form is an ImmutableMultiDict
     StockName = request.form['stock_name'].upper()
     ShowFeatures=[] # which features to show
     if request.form.get('close_price',False): ShowFeatures.append('Close')
@@ -31,8 +32,6 @@ def index():
     if len(SD) == 10 : StartDate=str(SD)
     ED=request.form['end_date']
     if len(ED) == 10 : EndDate=str(ED)
-    print StartDate, EndDate
-    print type(StartDate), type(EndDate)
     URL='https://www.quandl.com/api/v3/datasets/WIKI/'+StockName+'.json?auth_token=XMD-ta2mEyx3bj_AGW3n&start_date='+StartDate+'&end_date='+EndDate
     r = requests.get(URL).json()
     if 'dataset' in r:
